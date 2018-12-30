@@ -1,19 +1,36 @@
-from spectre import get_transactions, get_accounts
-from heroku import insert_transactions, drop_transactions, insert_accounts
+from spectre import get_transactions, get_accounts, refresh_login
+from heroku import insert_transactions, drop_transactions, insert_accounts, check_balance, drop_accounts
+
 import os
+
+from flask import Flask, jsonify, make_response
+from flask import request
+
 from dotenv import load_dotenv
 load_dotenv()
 
-account_id = os.getenv("account_id")
-customer_id = os.getenv("customer_id")
 per_page = 1000
 
-acccounts = get_accounts(customer_id)
+user_id = 1
 
-insert_accounts(acccounts)
+# Refresh account balances
 
-transactions = get_transactions(account_id,per_page)
 
-drop_transactions(account_id)
+def refresh_balances(user_id):
+    refresh_login(user_id)
+    drop_accounts(user_id)
+    acccounts = get_accounts(user_id)
+    insert_accounts(acccounts)
 
-insert_transactions(transactions)
+
+refresh_balances(user_id)
+
+
+def refresh_transactions(user_id):
+    refresh_login(user_id)
+    drop_transactions(user_id)
+    transactions = get_transactions(user_id, per_page)
+    insert_transactions(transactions)
+
+
+refresh_transactions(user_id)
