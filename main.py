@@ -13,8 +13,6 @@ per_page = 1000
 
 user_id = 1
 
-# Refresh account balances
-
 
 def refresh_balances(user_id):
     refresh_login(user_id)
